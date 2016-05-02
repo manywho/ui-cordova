@@ -50,6 +50,14 @@ $ cordova platform add android
 $ cordova platform add ios
 ```
 
+Add the following plugins to make sure the code can operate fully offline on all platforms:
+```bash
+$ cordova plugin add cordova-plugin-network-information
+$ cordova plugin add cordova-plugin-statusbar
+$ cordova plugin add cordova-plugin-whitelist
+$ cordova plugin add cordova-sqlite-storage
+```
+
 The UI code included in this project is compatible with iOS, Android, and Windows phones.
 
 Now that you've built the core Cordova project pieces, terminal to /www/manywho/runtime and install the various gulp libraries

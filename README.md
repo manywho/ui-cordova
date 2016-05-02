@@ -94,7 +94,7 @@ $ gulp offline
 [?] Is this a debug build? (y/n) y
 ```
 
-Press ctrl-C on Windows or Mac. Close your browser window - this view will not work currently.
+To cancel out of this mode, Press ctrl-C on Windows or Mac.
 
 **NOTE** The above steps should only be performed when the Flow is changed and the changes re-published. You should also make sure you keep any sequence or response files as these will be overwritten if you use the same build name. For now, each time the Flow is re-published with changes, you will need to re-do the responses exercise of going through every step in the Flow. If you are confident you know what changes have been made to the Flow, it is possible to simply get a response entry for the updated Page, etc and replace it in the reponses file rather than re-doing the entire cache of responses.
 

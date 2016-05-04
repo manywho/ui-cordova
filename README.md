@@ -196,10 +196,12 @@ This provides your offline UI with all of the responses that should be served to
 This will have generated a sequence for a recording. Each time the user goes through the sequence of screens recorded, the
 offline engine will record the data for later playback when the user is online.
 
-#### **Configuring Data Sync**: Configure the how data is retrieved from the underlying database.
+##### **Configuring Data Sync**: Configure the how data is retrieved from the underlying database.
 
 It's important to note that databases like Salesforce can return records in a random order. This means that the synchronization can
 ignore records as it pages through the results. In order to get around this issue:
+
+**Ordering**
 
 1. Open the /js/config/data-sync-{build}.js file.
 2. Find the "listFilter" property. This will have "limit": 250
@@ -212,9 +214,13 @@ ignore records as it pages through the results. In order to get around this issu
     "orderByDirectionType": "ASC"
 }
 ```
-5. Find the "chunkSize" property. This will have "chunkSize": 10
-6. Update the chunk size setting accordingly for your database. The 10 means that the data synchronization technology will get 10 records at a time for a single HTTP request until either all records or retrieved or the number of records hits the "limit" setting.
-7. Repeat these settings for each data synchronization entry.
+
+**Chunk Size**
+
+1. Find the "chunkSize" property. This will have "chunkSize": 10
+2. Update the chunk size setting accordingly for your database. The 10 means that the data synchronization technology will get 10 records at a time for a single HTTP request until either all records or retrieved or the number of records hits the "limit" setting.
+
+Repeat these settings for each data synchronization entry.
 
 
 #### Offline Management

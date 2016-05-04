@@ -106,11 +106,43 @@ $ gulp offline
 [?] What is the name of the Flow you want to make offline? {enter the name of your Flow}
 [?] Is this a PhoneGap build? (y/n) y
 [?] Is this a debug build? (y/n) y
+[?] Do you want to override any existing recording sequences? (y/n) n
 ```
 
 To cancel out of this mode, Press ctrl-C on Windows or Mac.
 
 **NOTE** The above steps should only be performed when the Flow is changed and the changes re-published. You should also make sure you keep any sequence or response files as these will be overwritten if you use the same build name. For now, each time the Flow is re-published with changes, you will need to re-do the responses exercise of going through every step in the Flow. If you are confident you know what changes have been made to the Flow, it is possible to simply get a response entry for the updated Page, etc and replace it in the reponses file rather than re-doing the entire cache of responses.
+
+You can run the following to simply run up an existing build:
+```bash
+$ gulp offline-run
+[13:38:56] Using gulpfile C:\GitHub\ui-cordova\www\manywho\runtime\gulpfile.js
+[13:38:56] Starting 'offline'...
+                                                                   @@@@
+                                                                   @@@@
+  @@@@   @@@@       @@@@@       @@@@    @@@@  @@@@ @@@@ @@@@@ @@@@ @@@@@@@@@     @@@@@@
+@@@@@@@@@@@@@@@  @@@@@@@@@@   @@@@@@@@  @@@@  @@@@ @@@@ @@@@@ @@@@ @@@@@@@@@@  @@@@@@@@@@
+@@@@ @@@@@ @@@@ @@@@    @@@@ @@@@@@@@@@ @@@@  @@@@ @@@@ @@@@@ @@@@ @@@@  @@@@ @@@@    @@@@
+@@@@ @@@@@ @@@@ @@@@    @@@@ @@@@  @@@@ @@@@  @@@@ @@@@ @@@@@ @@@@ @@@@  @@@@ @@@@    @@@@
+@@@@ @@@@@ @@@@ @@@@@@@ @@@@ @@@@  @@@@ @@@@@@@@@@ @@@@@@@@@@@@@@@ @@@@  @@@@  @@@@@@@@@@
+@@@@ @@@@@ @@@@   @@@@@ @@@@ @@@@  @@@@  @@@@@@@@@  @@@@@@ @@@@@@  @@@@  @@@@    @@@@@@
+                                             @@@@@
+                                           @@@@@@@
+                                           @@@@@
+[13:38:56] Starting 'offline-build'...
+[13:38:56] Finished 'offline-build' after 6.08 ms
+[13:38:56] Starting 'jshint'...
+[13:38:56] Finished 'jshint' after 47 ms
+[13:38:56] Starting 'less'...
+[13:38:56] Finished 'less' after 46 ms
+[13:38:56] Starting 'bootstrap'...
+[13:38:56] Finished 'bootstrap' after 2.87 ms
+[13:38:56] Starting 'bootstrap-templates'...
+[13:38:56] Finished 'bootstrap-templates' after 1.83 ms
+[13:38:56] Finished 'offline' after 136 ms
+[?] Was this a PhoneGap build? (y/n) y
+[?] Was this a debug build? (y/n) y
+```
 
 #### Testing
 
@@ -128,10 +160,11 @@ Once that is done, simply open the tools.html file in your browser.
 
 #### Making Flows Offline
 
-There are two parts to making Flows offline:
+There are three parts to making Flows offline:
 
 1. Recording the responses that result from a request.
 2. Recording sequences that should be remembered for future playback. This is for data that you expect the user to edit.
+3. Updating the data-sync configuration with any database specific or app specific settings.
 
 Breaking that down a bit further, you need to do the following:
 
@@ -162,6 +195,26 @@ This provides your offline UI with all of the responses that should be served to
 
 This will have generated a sequence for a recording. Each time the user goes through the sequence of screens recorded, the
 offline engine will record the data for later playback when the user is online.
+
+#### **Configuring Data Sync**: Configure the how data is retrieved from the underlying database.
+
+It's important to note that databases like Salesforce can return records in a random order. This means that the synchronization can
+ignore records as it pages through the results. In order to get around this issue:
+
+1. Open the /js/config/data-sync-{build}.js file.
+2. Find the "listFilter" property. This will have "limit": 250
+3. Update the limit setting accordingly. The 250 means that the data synchronization will retrieve a maximum of 250 records for that table.
+4. Add ordering to make sure the records are coming back in a consistent order. In the example below, the column is "Record ID" (have a look at the list of properties in the data synchronization entry. The ASC means the records should be ordered ascending (use DESC for descending).
+```json
+"listFilter": {
+    "limit": 250,
+    "orderByPropertyDeveloperName": "Record ID",
+    "orderByDirectionType": "ASC"
+}
+```
+5. Find the "chunkSize" property. This will have "chunkSize": 10
+6. Update the chunk size setting accordingly for your database. The 10 means that the data synchronization technology will get 10 records at a time for a single HTTP request until either all records or retrieved or the number of records hits the "limit" setting.
+7. Repeat these settings for each data synchronization entry.
 
 
 #### Offline Management

@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" class="manywho" style="height: 100%">
+<head>
+	<meta charset="utf-8" />
+	<meta name="msapplication-tap-highlight" content="no" />
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, target-densitydpi=device-dpi">
+	<title>ManyWho</title>
+	<style>
+		.mw-bs .wait-container {
+			position: relative;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			min-height: 500px;
+			z-index: 1100;
+			background-color: rgba(255, 255, 255, 0.5);
+		}
+
+		.mw-bs .wait-message {
+			position: relative;
+			text-align: center;
+			margin-top: 1em;
+			display: block;
+			top: 40%;
+			font-size: 2em;
+			padding: 0 2em;
+		}
+
+		/* outer */
+		.mw-bs .wait-spinner {
+			display: block;
+			position: relative;
+			left: 50%;
+			width: 150px;
+			height: 150px;
+			margin: 200px 0 0 -75px;
+			border-radius: 50%;
+			border: 3px solid transparent;
+			border-top-color: #268AAF;
+			-webkit-animation: spin 2s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
+			animation: spin 2s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
+		}
+
+		/* middle */
+		.mw-bs .wait-spinner:before {
+			content: "";
+			position: absolute;
+			top: 5px;
+			left: 5px;
+			right: 5px;
+			bottom: 5px;
+			border-radius: 50%;
+			border: 3px solid transparent;
+			border-top-color: #31B2E2;
+			-webkit-animation: spin 3s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
+			animation: spin 3s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
+		}
+
+		/* inner */
+		.mw-bs .wait-spinner:after {
+			content: "";
+			position: absolute;
+			top: 15px;
+			left: 15px;
+			right: 15px;
+			bottom: 15px;
+			border-radius: 50%;
+			border: 3px solid transparent;
+			border-top-color: #154E62;
+			-webkit-animation: spin 1.5s linear infinite; /* Chrome, Opera 15+, Safari 5+ */
+			animation: spin 1.5s linear infinite; /* Chrome, Firefox 16+, IE 10+, Opera */
+		}
+
+		@-webkit-keyframes spin {
+			0%   {
+				-webkit-transform: rotate(0deg);  /* Chrome, Opera 15+, Safari 3.1+ */
+				-ms-transform: rotate(0deg);  /* IE 9 */
+				transform: rotate(0deg);  /* Firefox 16+, IE 10+, Opera */
+			}
+			100% {
+				-webkit-transform: rotate(360deg);  /* Chrome, Opera 15+, Safari 3.1+ */
+				-ms-transform: rotate(360deg);  /* IE 9 */
+				transform: rotate(360deg);  /* Firefox 16+, IE 10+, Opera */
+			}
+		}
+		@keyframes spin {
+			0%   {
+				-webkit-transform: rotate(0deg);  /* Chrome, Opera 15+, Safari 3.1+ */
+				-ms-transform: rotate(0deg);  /* IE 9 */
+				transform: rotate(0deg);  /* Firefox 16+, IE 10+, Opera */
+			}
+			100% {
+				-webkit-transform: rotate(360deg);  /* Chrome, Opera 15+, Safari 3.1+ */
+				-ms-transform: rotate(360deg);  /* IE 9 */
+				transform: rotate(360deg);  /* Firefox 16+, IE 10+, Opera */
+			}
+		}
+	</style>
+</head>
+<body style="height: 100%">
+<div id="manywho">
+	<div id="loader" class="mw-bs" style="width: 100%; height: 100%;">
+		<div class="wait-container">
+			<div class="wait-spinner"></div>
+		</div>
+	</div>
+</div>
+
+<div class="mw-bs">
+	<div class="container">
+		<div class="row">
+			<div class="panel panel-primary">
+				<div class="panel-heading">Offline Recording</div>
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="checkbox">
+								<label>
+									<input type="checkbox" id="offline-status"> Set UI to offline
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<label for="responses-cache">js/config/responses-{build}.js (<a href="#" id="update-responses">Update</a>)</label>
+							<textarea class="form-control small" rows="5" id="responses-cache"></textarea>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<label for="requests-to-cache">js/config/sequences-{build}.js (<a href="#" id="update-recording">Start Recording</a>)</label>
+							<textarea class="form-control small" rows="5" id="requests-to-cache"></textarea>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<label for="data-sync">js/config/data-sync-{build}.js (<a href="#" id="update-data-sync">Update</a>)</label>
+							<textarea class="form-control small" rows="5" id="data-sync"></textarea>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<button id="clear-storage" class="btn btn-danger">Clear Storage</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<link rel="stylesheet" href="manywho/runtime/css/mw-bootstrap.css" />
+<link rel="stylesheet" href="manywho/runtime/css/themes/mw-sf1.css" id="theme" />
+
+<link rel="stylesheet" href="manywho/runtime/css/lib/react-select.css" />
+<link rel="stylesheet" href="manywho/runtime/css/lib/bootstrap-datetimepicker.css" />
+<link rel="stylesheet" href="manywho/runtime/css/lib/jquery.textcomplete.css" />
+<link rel="stylesheet" href="manywho/runtime/css/containers.css" />
+<link rel="stylesheet" href="manywho/runtime/css/select.css" />
+<link rel="stylesheet" href="manywho/runtime/css/textarea.css" />
+<link rel="stylesheet" href="manywho/runtime/css/table.css" />
+<link rel="stylesheet" href="manywho/runtime/css/input.css" />
+<link rel="stylesheet" href="manywho/runtime/css/outcome.css" />
+<link rel="stylesheet" href="manywho/runtime/css/loading.css" />
+<link rel="stylesheet" href="manywho/runtime/css/modal.css" />
+<link rel="stylesheet" href="manywho/runtime/css/group.css" />
+<link rel="stylesheet" href="manywho/runtime/css/pagination.css" />
+<link rel="stylesheet" href="manywho/runtime/css/notifications.css" />
+<link rel="stylesheet" href="manywho/runtime/css/navigation.css" />
+<link rel="stylesheet" href="manywho/runtime/css/feed.css" />
+<link rel="stylesheet" href="manywho/runtime/css/files.css" />
+<link rel="stylesheet" href="manywho/runtime/css/debug.css" />
+<link rel="stylesheet" href="manywho/runtime/css/content.css" />
+<link rel="stylesheet" href="manywho/runtime/css/status.css" />
+<link rel="stylesheet" href="manywho/runtime/css/radio.css" />
+<link rel="stylesheet" href="manywho/runtime/css/returnToParent.css" />
+<link rel="stylesheet" href="manywho/runtime/css/history.css" />
+<link rel="stylesheet" href="manywho/runtime/css/footer.css" />
+<link rel="stylesheet" href="manywho/runtime/css/list.css" />
+<link rel="stylesheet" href="manywho/runtime/css/flip.css" />
+
+
+
+<script src="manywho/runtime/js/vendor/jquery-2.1.4.min.js"></script>
+<script src="manywho/runtime/js/vendor/bootstrap-3.3.6.min.js"></script>
+<script src="manywho/runtime/js/vendor/react-0.14.6.min.js"></script>
+<script src="manywho/runtime/js/vendor/react-dom-0.14.6.min.js"></script>
+<script src="manywho/runtime/js/vendor/socket.io-1.3.7.js"></script>
+<script src="manywho/runtime/js/vendor/moment-with-locales-2.10.6.min.js"></script>
+<script src="manywho/runtime/js/vendor/loglevel-1.4.0.min.js"></script>
+
+<script>
+
+	function handleString(string) {
+		if (manywho.utils.isNullOrWhitespace(string) == false) {
+			return string;
+		} else {
+			return null;
+		}
+	}
+
+	var offline = {};
+
+	var objectDataRequests = [];
+	var fileDataRequests = [];
+	var isRecordingSequence = false;
+	var recordingSequence = null;
+	var recordedSequences = [];
+	var currentMapElementId = null;
+
+	var manywho = {
+		cdnUrl: '',
+		initialize: function () {
+
+			var queryParameters = manywho.utils.parseQueryString(window.location.search.substring(1));
+
+			if (queryParameters['offline'] == 'true') {
+
+				$('#offline-status').attr('checked', true);
+
+				manywho.connection.setOnlineOverride({
+					isOnline: false,
+					override: true
+				});
+
+			}
+
+			$('#offline-status').change(function() {
+
+				if ($(this).is(":checked")) {
+
+					manywho.connection.setOnlineOverride({
+						isOnline: false,
+						override: true
+					});
+
+				} else {
+
+					manywho.connection.setOnlineOverride({
+						isOnline: false,
+						override: false
+					});
+
+				}
+
+			});
+
+			$('#update-recording').click(function() {
+
+				if ($(this).attr('data-recording') == 'true') {
+
+					isRecordingSequence = false;
+
+					// If we have a recording with something in it, save it to the list of sequences
+					if (recordingSequence != null &&
+							recordingSequence.sequence != null &&
+							recordingSequence.sequence.length > 0) {
+
+						// Push a current entry to the sequence before finishing
+						recordingSequence.sequence.push({
+							mapElementId: currentMapElementId,
+							selectedOutcomeId: null
+						});
+
+						recordedSequences.push(JSON.parse(JSON.stringify(recordingSequence)));
+
+					}
+
+					// Null the current object
+					recordingSequence = null;
+
+					// Show the user the latest list of sequences
+					$('#requests-to-cache').val('offline.sequences = ' + JSON.stringify(recordedSequences, null, 4));
+
+					$(this).html('Start Recording');
+					$(this).attr('data-recording', 'false');
+
+				} else {
+
+					isRecordingSequence = true;
+					recordingSequence = {};
+
+					$(this).html('Stop Recording');
+					$(this).attr('data-recording', 'true');
+
+				}
+
+			});
+
+			var manywhoAdminTenantId = 'da497693-4d02-45db-bc08-8ea16d2ccbdf';
+
+			// Values specific to the flow
+			var tenantId = '591bfe16-3adf-45c5-be32-282d535a0cca';
+			var flowId = 'a92a471b-7917-40a7-9ec7-5324818ae327';
+
+			manywho.settings.initialize({
+						adminTenantId: manywhoAdminTenantId,
+						playerUrl: 'http://localhost:3000/tools.html',
+						joinUrl: 'http://localhost:3000/tools.html',
+						platform: {
+							uri: 'https://flow.manywho.com'
+						}
+					},
+					{
+						invoke: {
+							beforeSend: function (xhr, request) {
+
+								if (manywho.connection.isOnline(request.stateId).online == true) {
+
+									var selectedOutcomeId = null;
+
+									if (request.mapElementInvokeRequest != null) {
+										selectedOutcomeId = request.mapElementInvokeRequest.selectedOutcomeId;
+									}
+
+									if (isRecordingSequence) {
+
+										if (recordingSequence.hasOwnProperty('name') == false) {
+
+											// Create the root recording info
+											recordingSequence.name = 'My Sequence';
+											recordingSequence.entryOutcomeId = handleString(selectedOutcomeId);
+											recordingSequence.entryMapElementId = handleString(request.currentMapElementId);
+											recordingSequence.sequence = [];
+
+										} else {
+
+											// Push a new entry to the sequence
+											recordingSequence.sequence.push({
+												mapElementId: handleString(request.currentMapElementId),
+												selectedOutcomeId: handleString(selectedOutcomeId)
+											});
+
+										}
+
+									}
+
+								}
+
+							},
+							done: function(response) {
+
+								// We need the current map element id to finish any recording
+								currentMapElementId = handleString(response.currentMapElementId);
+
+							}
+						},
+						objectData: {
+							beforeSend: function(xhr, request) {
+
+								// Clone the object so we don't interfere with execution
+								var objectDataRequest = JSON.parse(JSON.stringify(request));
+
+								// Null out the state identifier
+								objectDataRequest.stateId = manywho.recording.emptyStateId;
+
+								// Put in a placeholder for table name
+								objectDataRequest.tableName = null;
+
+								// Set a default chunk size and limit
+								objectDataRequest.chunkSize = 10;
+								objectDataRequest.listFilter.limit = 250;
+
+								// Add a default name
+								objectDataRequest.name = "Sync " + objectDataRequest.objectDataType.developerName + "s";
+
+								objectDataRequests.push(objectDataRequest);
+
+							}
+						},
+						fileData: {
+							beforeSend: function(xhr, request) {
+
+								// Clone the object so we don't interfere with execution
+								var fileDataRequest = JSON.parse(JSON.stringify(request));
+
+								// Null out the state identifier
+								fileDataRequest.stateId = manywho.recording.emptyStateId;
+
+								// Put in a placeholder for table name
+								fileDataRequest.tableName = null;
+
+								fileDataRequests.push(request);
+
+							}
+						}
+					});
+
+			var options = {
+				authentication: {
+					sessionId: null,
+					sessionUrl: null
+				},
+				navigationElementId: null,
+				mode: null,
+				reportingMode: null,
+				trackLocation: false,
+				replaceUrl: false,
+				collaboration: {
+					isEnabled: false
+				},
+				autoFocusInput: true,
+				inputs: null,
+				annotations: null,
+				navigation: {
+					isFixed: true,
+					isWizard: false
+				},
+				offline: true,
+				callbacks: [],
+				collapsible: false,
+				history: null,
+				theme: null
+			};
+
+			manywho.log.enableAll();
+
+			manywho.engine.initialize(
+					tenantId,
+					flowId,
+					null,
+					'main',
+					queryParameters['join'],
+					queryParameters['authorization'],
+					options,
+					queryParameters['initialization']
+			);
+
+		}
+	};
+
+	$('#update-responses').on('click', function() {
+
+		manywho.responses.getAll().then(function(responses) {
+
+			for (var property in responses) {
+
+				if (responses.hasOwnProperty(property)) {
+
+					var response = responses[property];
+
+					if (response.stateId) {
+
+						// If we have a state id, we want to blank it out for the offline cache
+						response.stateId = manywho.recording.emptyStateId;
+						response.stateToken = manywho.recording.emptyStateId;
+
+					}
+
+				}
+
+			}
+
+			$('#responses-cache').val('offline.responses = ' + JSON.stringify(responses, null, 4));
+
+		});
+
+	});
+
+	$('#update-data-sync').on('click', function() {
+
+		var dataSync = {};
+		dataSync.objectDataRequests = objectDataRequests;
+		dataSync.fileDataRequests = fileDataRequests;
+
+		$('#data-sync').val(JSON.stringify(dataSync, null, 4));
+
+	});
+
+	$('#clear-storage').on('click', function() {
+		manywho.storage.clearAll().then(function () {
+			alert('Cleared!');
+		});
+	});
+
+</script>
+
+<script src="manywho/runtime/js/lib/react-dropzone.js"></script>
+<script src="manywho/runtime/js/lib/datetimepicker.js"></script>
+<script src="manywho/runtime/js/lib/jquery.plugins.js"></script>
+<script src="manywho/runtime/js/lib/jquery.textcomplete.js"></script>
+<script src="manywho/runtime/js/lib/classNames.js"></script>
+<script src="manywho/runtime/js/lib/react-input-autosize.js"></script>
+<script src="manywho/runtime/js/lib/react-select.js"></script>
+<script src="manywho/runtime/js/services/ajax.js"></script>
+<script src="manywho/runtime/js/services/connection.js"></script>
+<script src="manywho/runtime/js/services/model.js"></script>
+<script src="manywho/runtime/js/services/component.js"></script>
+<script src="manywho/runtime/js/services/styling.js"></script>
+<script src="manywho/runtime/js/services/collaboration.js"></script>
+<script src="manywho/runtime/js/services/state.js"></script>
+<script src="manywho/runtime/js/services/engine.js"></script>
+<script src="manywho/runtime/js/services/theming.js"></script>
+<script src="manywho/runtime/js/services/settings.js"></script>
+<script src="manywho/runtime/js/services/json.js"></script>
+<script src="manywho/runtime/js/services/utils.js"></script>
+<script src="manywho/runtime/js/services/authorization.js"></script>
+<script src="manywho/runtime/js/services/callbacks.js"></script>
+<script src="manywho/runtime/js/services/social.js"></script>
+<script src="manywho/runtime/js/services/log.js"></script>
+<script src="manywho/runtime/js/services/graph.js"></script>
+<script src="manywho/runtime/js/services/offline.js"></script>
+<script src="manywho/runtime/js/services/recording.js"></script>
+<script src="manywho/runtime/js/services/responses.js"></script>
+<script src="manywho/runtime/js/services/simulation.js"></script>
+<script src="manywho/runtime/js/services/storage-local.js"></script>
+<script src="js/authorization.js"></script>
+
+<script src="manywho/runtime/js/components/mixins.js"></script>
+<script src="manywho/runtime/js/components/main.js"></script>
+<script src="manywho/runtime/js/components/navigation.js"></script>
+<script src="manywho/runtime/js/components/group.js"></script>
+<script src="manywho/runtime/js/components/inline.js"></script>
+<script src="manywho/runtime/js/components/vertical.js"></script>
+<script src="manywho/runtime/js/components/horizontal.js"></script>
+<script src="manywho/runtime/js/components/presentation.js"></script>
+<script src="manywho/runtime/js/components/input.js"></script>
+<script src="manywho/runtime/js/components/textarea.js"></script>
+<script src="manywho/runtime/js/components/content.js"></script>
+<script src="manywho/runtime/js/components/outcome.js"></script>
+<script src="manywho/runtime/js/components/select.js"></script>
+<script src="manywho/runtime/js/components/table-container.js"></script>
+<script src="manywho/runtime/js/components/table-large.js"></script>
+<script src="manywho/runtime/js/components/table-small.js"></script>
+<script src="manywho/runtime/js/components/table-input.js"></script>
+<script src="manywho/runtime/js/components/feed.js"></script>
+<script src="manywho/runtime/js/components/pagination.js"></script>
+<script src="manywho/runtime/js/components/wait.js"></script>
+<script src="manywho/runtime/js/components/modal.js"></script>
+<script src="manywho/runtime/js/components/notifications.js"></script>
+<script src="manywho/runtime/js/components/file-upload.js"></script>
+<script src="manywho/runtime/js/components/debug.js"></script>
+<script src="manywho/runtime/js/components/status.js"></script>
+<script src="manywho/runtime/js/components/voting.js"></script>
+<script src="manywho/runtime/js/components/image.js"></script>
+<script src="manywho/runtime/js/components/returnToParent.js"></script>
+<script src="manywho/runtime/js/components/radio.js"></script>
+<script src="manywho/runtime/js/components/history.js"></script>
+<script src="manywho/runtime/js/components/footer.js"></script>
+<script src="manywho/runtime/js/components/hidden.js"></script>
+<script src="manywho/runtime/js/components/list.js"></script>
+<script src="manywho/runtime/js/components/iframe.js"></script>
+<script src="manywho/runtime/js/components/flip.js"></script>
+<script src="manywho/runtime/js/components/login.js"></script>
+<script src="manywho/runtime/js/components/recordings.js"></script>
+<script src="manywho/runtime/js/components/data-sync.js"></script>
+
+<!-- Config -->
+<script src="js/config/data-sync-test.js"></script>
+<script src="js/config/responses-test.js"></script>
+<script src="js/config/sequences-test.js"></script>
+<script src="js/config/snapshot-test.js"></script>
+<script src="js/config/default-test.js"></script>
+<!-- Config -->
+
+<!-- Extensions -->
+<!-- Extensions -->
+
+<script>
+	manywho.initialize();
+</script>
+</body>
+</html>

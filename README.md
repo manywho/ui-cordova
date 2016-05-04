@@ -50,12 +50,18 @@ $ cordova platform add android
 $ cordova platform add ios
 ```
 
+Add the InAppBrowser plugin to support oauth authentication:
+```bash
+$ cordova plugin add cordova-plugin-inappbrowser
+```
+
 Add the following plugins to make sure the code can operate fully offline on all platforms:
 ```bash
 $ cordova plugin add cordova-plugin-network-information
 $ cordova plugin add cordova-plugin-statusbar
 $ cordova plugin add cordova-plugin-whitelist
 $ cordova plugin add cordova-sqlite-storage
+$ cordova plugin add cordova-plugin-inappbrowser
 ```
 
 The UI code included in this project is compatible with iOS, Android, and Windows phones.

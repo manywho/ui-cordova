@@ -144,9 +144,16 @@ $ gulp offline-run
 [?] Was this a debug build? (y/n) y
 ```
 
-#### Testing
+#### Extensions
 
-Go to */www/tools.html* and open the file in a text editor. Also, you may need to add any custom component references. For example, if you're using signature pad to capture digital signatures, add the following script references to the very bottom of the page (just above the script calling `manywho.initialize();`):
+Go to both:
+
+```
+/www/index.html
+/www/tools.html
+```
+
+and open the file in a text editor. Also, you may need to add any custom component references. For example, if you're using signature pad to capture digital signatures, add the following script references to the very bottom of the page (just above the script calling `manywho.initialize();`):
 
 ```html
 <!-- Extensions -->
@@ -160,16 +167,28 @@ Once that is done, simply open the tools.html file in your browser.
 
 #### Making Flows Offline
 
-There are three parts to making Flows offline:
+There are four parts to making Flows offline:
 
-1. Recording the responses that result from a request.
-2. Recording sequences that should be remembered for future playback. This is for data that you expect the user to edit.
-3. Updating the data-sync configuration with any database specific or app specific settings.
+1. Ensuring Outcome "Types" are consistent with behavior.
+2. Recording the responses that result from a request.
+3. Recording sequences that should be remembered for future playback. This is for data that you expect the user to edit.
+4. Updating the data-sync configuration with any database specific or app specific settings.
 
 Breaking that down a bit further, you need to do the following:
 
-Go to */www/tools.html* in your browser. Click on the **Clear Storage** button. Refresh the tools.html page again to be sure
+Run `gulp offline-run` as described above. Click on the **Clear Storage** button. Refresh the tools.html page again to be sure
 there's not data being stored that's invalid.
+
+##### **Outcome Types**: Make sure offline works similarly to online:
+
+When building your Flow, you need to make sure your Outcomes are configured to simulate the correct behaviour. The Outcome "Type"
+(or pageActionType in the Page metadata) can have a range of values, though for simplicity, here are our recommendations:
+
+- **New**: Use this action type if the Outcome will create a "new" object. For example, if your Outcome is placed with a Table of objects, this will tell the offline UI that you're creating a new one. As a result, it will clear any existing object held in the cache so the page is correctly blank.
+- **Edit**: Use this action type if the Outcome will allow the user to "edit" an object. For example, if the Outcome is placed with a Table (as above), this will tell the offline UI that it should cache the selected object and show it in any pages that follow.
+- **Delete**: Use this action type if the Outcome will delete an object.
+
+It's important to note that none of these operations is actually executing. Changes made by the user are all ignored, unless that change is configured in a sequence. The sequences tell the offline engine which user actions should be remembered.
 
 ##### **Recording Responses**: Click through every path in the Flow:
 
@@ -194,7 +213,11 @@ This provides your offline UI with all of the responses that should be served to
 6. Open your js/config/sequences-{build}.js file and replace the 'null' with the JSON.
 
 This will have generated a sequence for a recording. Each time the user goes through the sequence of screens recorded, the
-offline engine will record the data for later playback when the user is online.
+offline engine will record the data for later playback when the user is online. A few considerations with respect to sequences:
+
+1. Your Flow must have `Allow the Flow to be moved to any Map Element in the flow` enabled (have a look in the Flow properties in the Draw tooling). This allows the sync technology to navigate the workflow on behalf of the user to replay the recorded sequences back when next online.
+2. Recordings can be configured to `allowInterruptions`. This means if the user does not follow the exact click path, the recording will still be registered. By default, the user must follow the exact same Outcome/MapElements for the recording to be registered.
+3. Multiple recordings can be managed in parallel is `allowInterruptions` is set to `true`.
 
 ##### **Configuring Data Sync**: Configure the how data is retrieved from the underlying database.
 
@@ -276,6 +299,20 @@ $ cordova run android --emulator
 iOS
 ```bash
 $ cordova run ios --emulator
+```
+
+#### Debugging
+
+When debugging your offline Flow applications, we recommend using the Chrome browser, with the Developer Tools open so you can see any log lines in the console. If you want to debug in the emulator, you can use iOS logs or Android `logcat`. 
+
+To get Android `logcat` you can do the following on Mac:
+```bash
+$ brew install android-platform-tools
+```
+
+Once installed, you can run logcat to view console logs by simply typing:
+```bash
+$ adb logcat
 ```
 
 ## Contributing

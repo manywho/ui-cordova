@@ -146,14 +146,16 @@ $ gulp offline-run
 
 #### Extensions
 
-Go to both:
+If your offline build includes additional extension libraries, you can add those by adding them to the `js/config/extensions-{build}.json`. If this file doesn't exist you can create a new one. The format is as follows:
 
-```
-/www/index.html
-/www/tools.html
+```json
+[
+    "js/vendor/signature_pad.min.js",
+    "js/ui-signature-pad/signature-pad.js"
+]
 ```
 
-and open the file in a text editor. Also, you may need to add any custom component references. For example, if you're using signature pad to capture digital signatures, add the following script references to the very bottom of the page (just above the script calling `manywho.initialize();`):
+When running `gulp offline-build`, this will add the following references to your index.html and tools.html pages:
 
 ```html
 <!-- Extensions -->
@@ -161,9 +163,6 @@ and open the file in a text editor. Also, you may need to add any custom compone
 <script src="js/ui-signature-pad/signature-pad.js"></script>
 <!-- Extensions -->
 ```
-
-Once that is done, simply open the tools.html file in your browser.
-
 
 #### Making Flows Offline
 
@@ -188,7 +187,7 @@ When building your Flow, you need to make sure your Outcomes are configured to s
 - **Edit**: Use this action type if the Outcome will allow the user to "edit" an object. For example, if the Outcome is placed with a Table (as above), this will tell the offline UI that it should cache the selected object and show it in any pages that follow.
 - **Delete**: Use this action type if the Outcome will delete an object.
 
-It's important to note that none of these operations is actually executing. Changes made by the user are all ignored, unless that change is configured in a sequence. The sequences tell the offline engine which user actions should be remembered.
+It's important that all changes to the application state made by the user are ignored while offline, unless that change is configured in a sequence. The sequences tell the offline engine which user actions should be remembered.
 
 ##### **Recording Responses**: Click through every path in the Flow:
 

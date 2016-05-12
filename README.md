@@ -17,12 +17,7 @@ https://nodejs.org
 
 ## Usage
 
-This repo is linked to our HTML5 player UI code repo here:
-```
-https://github.com/manywho/ManyWho_HTML5_Players2.
-```
-
-This allows 
+This repo is linked to our HTML5 player UI code repo here: https://github.com/manywho/ManyWho_HTML5_Players2. This allows 
 you to easily debug any UI issues and easily extend the UI to include new capabilities as we have included with the above
 two additional PhoneGap/Cordova plugins.
 
@@ -50,7 +45,7 @@ $ cordova platform add android
 $ cordova platform add ios
 ```
 
-Add the InAppBrowser plugin to support oauth authentication:
+Add the InAppBrowser plugin to support for OAuth2 authentication:
 ```bash
 $ cordova plugin add cordova-plugin-inappbrowser
 ```
@@ -61,7 +56,6 @@ $ cordova plugin add cordova-plugin-network-information
 $ cordova plugin add cordova-plugin-statusbar
 $ cordova plugin add cordova-plugin-whitelist
 $ cordova plugin add cordova-sqlite-storage
-$ cordova plugin add cordova-plugin-inappbrowser
 ```
 
 The UI code included in this project is compatible with iOS, Android, and Windows phones.
@@ -106,12 +100,20 @@ $ gulp offline
 [?] What is the name of the Flow you want to make offline? {enter the name of your Flow}
 [?] Is this a PhoneGap build? (y/n) y
 [?] Is this a debug build? (y/n) y
-[?] Do you want to override any existing recording sequences? (y/n) n
 ```
 
-To cancel out of this mode, Press ctrl-C on Windows or Mac.
+There are a few rules we apply when creating a debug build:
 
-**NOTE** The above steps should only be performed when the Flow is changed and the changes re-published. You should also make sure you keep any sequence or response files as these will be overwritten if you use the same build name. For now, each time the Flow is re-published with changes, you will need to re-do the responses exercise of going through every step in the Flow. If you are confident you know what changes have been made to the Flow, it is possible to simply get a response entry for the updated Page, etc and replace it in the reponses file rather than re-doing the entire cache of responses.
+1. If the /js/config/sequences-{build}.js file does not exist, create a new one. Otherwise, leave the existing file as is.
+2. If the /js/config/default-{build}.js file does not exist, create a new one. Otherwise, leave the existing file as is.
+3. The index.html, tools.html, /js/config/responses-{build}.js, /js/config/data-sync-{build}.js, and /js/config/snapshot-{build].js files are always overwritten.
+
+There are also a few rules we apply when creating a non-debug build:
+
+1. Do not overwrite the /js/config/sequences-{build}.js, /js/config/default-{build}.js, and /js/config/responses-{build}.js files.
+2. The index.html, tools.html, /js/config/data-sync-{build}.js, and /js/config/snapshot-{build].js files are always overwritten.
+
+**NOTE** The above steps should only be performed when the Flow is changed or you're switching to a non-debug build. You should also make sure you keep your responses file as it can be overwritten if you use the same build name. For now, each time the Flow is re-published with changes, you will need to re-do the responses exercise of going through every step in the Flow. If you are confident you know what changes have been made to the Flow, it is possible to simply get a response entry for the updated Page, etc and replace it in the reponses file rather than re-doing the entire cache of responses.
 
 You can run the following to simply run up an existing build:
 ```bash
@@ -146,14 +148,16 @@ $ gulp offline-run
 
 #### Extensions
 
-Go to both:
+If your offline build includes additional extension libraries, you can add those by adding them to the `js/config/extensions-{build}.json`. If this file doesn't exist you can create a new one. The format is as follows:
 
-```
-/www/index.html
-/www/tools.html
+```json
+[
+    "js/vendor/signature_pad.min.js",
+    "js/ui-signature-pad/signature-pad.js"
+]
 ```
 
-and open the file in a text editor. Also, you may need to add any custom component references. For example, if you're using signature pad to capture digital signatures, add the following script references to the very bottom of the page (just above the script calling `manywho.initialize();`):
+When running `gulp offline-build`, this will add the following references to your index.html and tools.html pages:
 
 ```html
 <!-- Extensions -->
@@ -161,9 +165,6 @@ and open the file in a text editor. Also, you may need to add any custom compone
 <script src="js/ui-signature-pad/signature-pad.js"></script>
 <!-- Extensions -->
 ```
-
-Once that is done, simply open the tools.html file in your browser.
-
 
 #### Making Flows Offline
 
@@ -188,7 +189,7 @@ When building your Flow, you need to make sure your Outcomes are configured to s
 - **Edit**: Use this action type if the Outcome will allow the user to "edit" an object. For example, if the Outcome is placed with a Table (as above), this will tell the offline UI that it should cache the selected object and show it in any pages that follow.
 - **Delete**: Use this action type if the Outcome will delete an object.
 
-It's important to note that none of these operations is actually executing. Changes made by the user are all ignored, unless that change is configured in a sequence. The sequences tell the offline engine which user actions should be remembered.
+It's important that all changes to the application state made by the user are ignored while offline, unless that change is configured in a sequence. The sequences tell the offline engine which user actions should be remembered.
 
 ##### **Recording Responses**: Click through every path in the Flow:
 
@@ -236,6 +237,31 @@ ignore records as it pages through the results. In order to get around this issu
     "orderByPropertyDeveloperName": "Record ID",
     "orderByDirectionType": "ASC"
 }
+```
+
+If you want to take advantage of our build system, you can also create an override file for your data-sync entries:
+
+1. Create a new text file: /js/config/data-sync-overrides-{build}.json
+2. In the file, create an entry for each data sync you want to override - matching based on the typeElementBindingId (i.e. look at the typeElementBindingId of the data sync you want to override and match that with the same in the override):
+```json
+[
+  {
+    "typeElementBindingId": "1747cd44-ba3a-4736-803b-3aa71784e4de",
+    "listFilter": {
+      "limit": 250,
+      "orderByPropertyDeveloperName": "Record ID",
+      "orderByDirectionType": "ASC"
+    }
+  },
+  {
+    "typeElementBindingId": "6c385210-e943-47a7-ad36-cc15f3f191b3",
+    "listFilter": {
+      "limit": 250,
+      "orderByPropertyDeveloperName": "Activity ID",
+      "orderByDirectionType": "ASC"
+    }
+  }
+]
 ```
 
 **Chunk Size**

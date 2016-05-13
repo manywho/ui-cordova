@@ -98,7 +98,7 @@ $ gulp offline
 [?] What is your ManyWho username? {enter your ManyWho Flow builder username}
 [?] And your password? {enter your password}
 [?] What is the name of the Flow you want to make offline? {enter the name of your Flow}
-[?] Is this a PhoneGap build? (y/n) y
+[?] Is this a Cordova build? (y/n) y
 [?] Is this a debug build? (y/n) y
 ```
 
@@ -142,7 +142,7 @@ $ gulp offline-run
 [13:38:56] Starting 'bootstrap-templates'...
 [13:38:56] Finished 'bootstrap-templates' after 1.83 ms
 [13:38:56] Finished 'offline' after 136 ms
-[?] Was this a PhoneGap build? (y/n) y
+[?] Was this a Cordova build? (y/n) y
 [?] Was this a debug build? (y/n) y
 ```
 

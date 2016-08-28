@@ -1,0 +1,26 @@
+[
+  {
+    "typeElementBindingId": "74a08b3b-c7af-4522-ba6f-64587abd9e87",
+    "listFilter": {
+      "limit": 250,
+      "orderByPropertyDeveloperName": "Contact ID",
+      "orderByDirectionType": "ASC"
+    }
+  },
+  {
+    "typeElementBindingId": "0a1f4809-4669-46f1-9ef5-7568d09d907d",
+    "listFilter": {
+      "limit": 250,
+      "orderByPropertyDeveloperName": "Activity ID",
+      "orderByDirectionType": "ASC"
+    }
+  },
+  {
+    "typeElementBindingId": "4120eaef-0733-4665-8f5e-c8fafcc525c9",
+    "listFilter": {
+      "limit": 250,
+      "orderByPropertyDeveloperName": "Account ID",
+      "orderByDirectionType": "ASC"
+    }
+  }
+]

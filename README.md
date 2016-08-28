@@ -56,6 +56,7 @@ $ cordova plugin add cordova-plugin-network-information
 $ cordova plugin add cordova-plugin-statusbar
 $ cordova plugin add cordova-plugin-whitelist
 $ cordova plugin add cordova-sqlite-storage
+$ cordova plugin add cordova-plugin-splashscreen
 ```
 
 The UI code included in this project is compatible with iOS, Android, and Windows phones.

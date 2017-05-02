@@ -2,4 +2,6 @@ plugins/
 platforms/
 .idea/
 index.html
-tools.html
+www/css
+www/js
+node_modules

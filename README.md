@@ -2,6 +2,17 @@
 
 Cordova container for running ManyWho flows as apps on mobile devices.
 
+## Prerequisites
+
+* [NodeJS](https://nodejs.org/en/)
+* [Cordova](https://cordova.apache.org/)
+* Xcode for iOS apps
+* Android Studio / SDK for android apps
+
+If you are unfamiliar with cordova and / or building mobile apps you should go through the really good cordova tutorial: https://cordova.apache.org/docs/en/latest/guide/cli/index.html
+
+If you can get a cordova app running on an iOS or Android device / emulator then you are ready to go.
+
 ## Usage
 
 This project is a wrapper for the other UI projects, you will need to clone at least [ui-core](https://github.com/manywho/ui-core) and [ui-bootstrap](https://github.com/manywho/ui-bootstrap), and optionally [ui-offline](https://github.com/manywho/ui-offline).

@@ -1,0 +1,24 @@
+{
+  "name": "ui-cordova",
+  "version": "0.0.1",
+  "description": "Cordova container for running ManyWho flows as apps on mobile devices.",
+  "scripts": {
+    "prepare": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/manywho/ui-cordova.git"
+  },
+  "bugs": {
+    "url": "https://github.com/manywho/ui-cordova/issues"
+  },
+  "homepage": "https://github.com/manywho/ui-cordova#readme",
+  "devDependencies": {
+    "fs-extra": "^5.0.0",
+    "mkdirp": "^0.5.1",
+    "progress": "^2.0.0",
+    "promptly": "^3.0.3",
+    "request": "^2.83.0",
+    "request-promise-native": "^1.0.5"
+  }
+}

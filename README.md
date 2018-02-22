@@ -22,6 +22,15 @@ This project is a wrapper for the other UI projects, you will need to clone at l
 * Install the dependencies for each ui-* project (consult their respective readme's for details)
 * Run the watcher or a static build for each ui-* project, such that the `--build` switch points to the `www` directory in this project
 
+Alternatively:
+
+```
+npm install
+npm run prepare
+```
+
+This will download the latest version of the UI assets (excluding offline) and update `index.html` with the specified `tenant id`, `flow id` and `flow version id`.
+
 ### Running
 
 Run using the standard cordova command line e.g.

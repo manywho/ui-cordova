@@ -108,7 +108,7 @@
     </div>
 
     <link rel="stylesheet" href="css/mw-bootstrap.css" />
-    <link rel="stylesheet" href="css/themes/mw-paper.css" id="theme" />
+    <link rel="stylesheet" href="css/themes/mw-{{{THEME}}}.css" id="theme" />
     <link rel="stylesheet" href="css/ui-bootstrap.css" />
 
     <script src="vendor/jquery-2.1.4.min.js"></script>
@@ -124,11 +124,11 @@
             cdnUrl: '',
             initialize: function () {
                 
-                var tenantId = 'b32715f9-c7c1-4ea4-b3b0-a75aa8d3e095';
-                var flowId = '382163e1-61a9-4053-93c9-a79eddd193e7';
-                var flowVersionId = '93f66202-11f6-4c1d-88fb-afe0d5bbe44e';
-                var username = '';
-                var password = '';
+                var tenantId = '{{{TENANT_ID}}}';
+                var flowId = '{{{FLOW_ID}}}';
+                var flowVersionId = '{{{FLOW_VERSION_ID}}}';
+                var username = '{{{USERNAME}}}';
+                var password = '{{{PASSWORD}}}';
     
                 manywho.settings.initialize({
                     playerUrl: "https://flow.manywho.com/" + tenantId + "/play/default",
@@ -179,8 +179,8 @@
 	
     <script src="js/ui-core.js"></script>
     <script src="js/ui-bootstrap.js"></script>
-    
-        
+    {{{METADATA}}}
+    {{{OFFLINE}}}    
 
     <script>
         manywho.initialize();

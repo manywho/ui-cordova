@@ -75,13 +75,9 @@
         @-webkit-keyframes spin {
             0%   {
                 -webkit-transform: rotate(0deg);  /* Chrome, Opera 15+, Safari 3.1+ */
-                -ms-transform: rotate(0deg);  /* IE 9 */
-                transform: rotate(0deg);  /* Firefox 16+, IE 10+, Opera */
             }
             100% {
                 -webkit-transform: rotate(360deg);  /* Chrome, Opera 15+, Safari 3.1+ */
-                -ms-transform: rotate(360deg);  /* IE 9 */
-                transform: rotate(360deg);  /* Firefox 16+, IE 10+, Opera */
             }
         }
         @keyframes spin {
@@ -127,8 +123,6 @@
                 var tenantId = '{{{TENANT_ID}}}';
                 var flowId = '{{{FLOW_ID}}}';
                 var flowVersionId = '{{{FLOW_VERSION_ID}}}';
-                var username = '{{{USERNAME}}}';
-                var password = '{{{PASSWORD}}}';
     
                 manywho.settings.initialize({
                     playerUrl: "https://flow.manywho.com/" + tenantId + "/play/default",
@@ -175,12 +169,14 @@
 
             }
         };
+
+        window.manywho = manywho;
     </script>
 	
     <script src="js/ui-core.js"></script>
     <script src="js/ui-bootstrap.js"></script>
-    {{{METADATA}}}
     {{{OFFLINE}}}    
+    {{{METADATA}}}
 
     <script>
         manywho.initialize();

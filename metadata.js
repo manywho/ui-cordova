@@ -1,6 +1,6 @@
 const rp = require('request-promise-native');
 
-module.exports = async ({ baseUrl = "https://staging.manywho.com", username, password, tenantId, flowId, flowVersionId }) => {
+module.exports = async ({ baseUrl = "https://flow.manywho.com", username, password, tenantId, flowId, flowVersionId }) => {
 
     const token = await rp({
         method: "POST",
@@ -25,10 +25,6 @@ module.exports = async ({ baseUrl = "https://staging.manywho.com", username, pas
     });
 
     const authTokenClean = authToken.replace(/\"/g, '');
-
-    console.log('clean: ', authTokenClean)
-    console.log('uri: ', baseUrl + "/api/draw/1/flow/snap/" + flowId + "/" + flowVersionId)
-    console.log('tenantId: ', tenantId)
 
     const snapshot = await rp({
         method: "GET",

@@ -75,13 +75,9 @@
         @-webkit-keyframes spin {
             0%   {
                 -webkit-transform: rotate(0deg);  /* Chrome, Opera 15+, Safari 3.1+ */
-                -ms-transform: rotate(0deg);  /* IE 9 */
-                transform: rotate(0deg);  /* Firefox 16+, IE 10+, Opera */
             }
             100% {
                 -webkit-transform: rotate(360deg);  /* Chrome, Opera 15+, Safari 3.1+ */
-                -ms-transform: rotate(360deg);  /* IE 9 */
-                transform: rotate(360deg);  /* Firefox 16+, IE 10+, Opera */
             }
         }
         @keyframes spin {
@@ -108,7 +104,7 @@
     </div>
 
     <link rel="stylesheet" href="css/mw-bootstrap.css" />
-    <link rel="stylesheet" href="css/themes/mw-paper.css" id="theme" />
+    <link rel="stylesheet" href="css/themes/mw-yeti.css" id="theme" />
     <link rel="stylesheet" href="css/ui-bootstrap.css" />
 
     <script src="vendor/jquery-2.1.4.min.js"></script>
@@ -124,11 +120,9 @@
             cdnUrl: '',
             initialize: function () {
                 
-                var tenantId = 'b32715f9-c7c1-4ea4-b3b0-a75aa8d3e095';
-                var flowId = '382163e1-61a9-4053-93c9-a79eddd193e7';
-                var flowVersionId = '93f66202-11f6-4c1d-88fb-afe0d5bbe44e';
-                var username = '';
-                var password = '';
+                var tenantId = 'b176772a-ffc7-4ed6-88cb-6f44dffcd784';
+                var flowId = 'f5d2d607-22e9-4627-a898-c7a9fd45fb1a';
+                var flowVersionId = '1895cc2a-2c40-42a8-9b17-779d9ff876d6';
     
                 manywho.settings.initialize({
                     playerUrl: "https://flow.manywho.com/" + tenantId + "/play/default",
@@ -175,12 +169,14 @@
 
             }
         };
+
+        window.manywho = manywho;
     </script>
 	
     <script src="js/ui-core.js"></script>
     <script src="js/ui-bootstrap.js"></script>
-    
-        
+    <script src="js/ui-offline.js"></script>    
+    <script src="js/ui-metadata.js"></script>
 
     <script>
         manywho.initialize();

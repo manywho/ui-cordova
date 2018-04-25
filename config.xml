@@ -1,12 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.manywho.cordova" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
-    <name>ManyWho</name>
+<widget id="com.boomi.cordova" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+    <name>Boomi Flow</name>
     <description>
-        ManyWho application template.
+        Boomi Flow application template.
     </description>
-    <author email="support@manywho.com" href="https://manywho.com">
-        ManyWho Team
-    </author>
     <content src="index.html" />
     <preference name="StatusBarOverlaysWebView" value="false" />
     <preference name="StatusBarBackgroundColor" value="#000000" />
@@ -50,8 +47,8 @@
         <splash height="2208" src="res/ios/screen/screen1242x2208.png" width="1242" />
         <splash height="1242" src="res/ios/screen/screen2208x1242.png" width="2208" />
     </platform>
-    <engine name="android" spec="^6.2.3" />
-    <engine name="ios" spec="~4.3.1" />
+    <engine name="android" spec="^6.4.0" />
+    <engine name="ios" spec="^4.3.1" />
     <plugin name="cordova-plugin-browsersync" spec="^0.1.6" />
     <plugin name="cordova-plugin-whitelist" spec="^1.3.2" />
 </widget>

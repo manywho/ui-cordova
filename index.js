@@ -4,7 +4,10 @@ const rp = require('request-promise-native');
 const fs = require('fs-extra');
 const mkdirp = require('mkdirp');
 const decompressResponse = require('decompress-response'); 
+const argv = require('yargs').argv;
 const metadata = require('./metadata');
+
+const { apiBaseUrl = 'https://flow.manywho.com', cdnBaseUrl = 'https://assets.manywho.com' } = argv;
 
 const generateHtml = ({ 
     htmlTemplate, makeOffline, theme, tenantId, flowId, flowVersionId
@@ -20,7 +23,7 @@ const generateHtml = ({
     console.log('Downloading UI Framework');
 
     const bundles = await rp.get({
-        uri: 'https://assets.manywho.com/bundles.json',
+        uri: `${cdnBaseUrl}/bundles.json`,
         json: true
     });
 
@@ -83,7 +86,7 @@ const generateHtml = ({
 
     Promise.all(
         bundlePaths.map(path => rp.get({ 
-            uri: `https://assets.manywho.com${path}`,
+            uri: `${cdnBaseUrl}${path}`,
             gzip: true
         }))
     ).then(
@@ -95,9 +98,9 @@ const generateHtml = ({
     if(makeOffline) {
 
         Promise.all([
-            metadata({ username, password, tenantId, flowId, flowVersionId }),
+            metadata({ baseUrl: apiBaseUrl, username, password, tenantId, flowId, flowVersionId }),
             rp.get({
-                uri: 'https://assets.manywho.com' + bundles.offline[0],
+                uri: `${cdnBaseUrl}${bundles.offline[0]}`,
                 gzip: true
             })
         ]).then((files) => {

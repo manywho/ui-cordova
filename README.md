@@ -26,10 +26,22 @@ Alternatively:
 
 ```
 npm install
-npm run prepare
+npm run build
 ```
 
-This will download the latest version of the UI assets (excluding offline) and update `index.html` with the specified `tenant id`, `flow id` and `flow version id`.
+This will download the latest version of the UI assets and update `index.html` with the specified `tenant id`, `flow id` and `flow version id`.
+
+If you choose to run the flow offline you will also be promted for a username and password.
+
+The build command optionally accepts two arguments:
+```
+cdnBaseUrl [default - https://assets.manywho.com]
+apiBaseUrl [default - https://flow.manywho.com]
+```
+example 
+```
+npm run build -- --apiBaseUrl="https://example.com" --cdnBaseUrl="https://example.com"
+```
 
 ### Running
 

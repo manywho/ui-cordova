@@ -13,16 +13,9 @@ If you are unfamiliar with cordova and / or building mobile apps you should go t
 
 If you can get a cordova app running on an iOS or Android device / emulator then you are ready to go.
 
-## Usage
-
-This project is a wrapper for the other UI projects, you will need to clone at least [ui-core](https://github.com/manywho/ui-core) and [ui-bootstrap](https://github.com/manywho/ui-bootstrap), and optionally [ui-offline](https://github.com/manywho/ui-offline).
-
 ### Building
 
-* Install the dependencies for each ui-* project (consult their respective readme's for details)
-* Run the watcher or a static build for each ui-* project, such that the `--build` switch points to the `www` directory in this project
-
-Alternatively:
+Make sure your flow is published before running the build.
 
 ```
 npm install
@@ -42,6 +35,10 @@ example
 ```
 npm run build -- --apiBaseUrl="https://example.com" --cdnBaseUrl="https://example.com"
 ```
+Alternatively, to use local dependencies:
+
+* Install the dependencies for each ui-* project (consult their respective readme's for details)
+* Run the watcher or a static build for each ui-* project, such that the `--build` switch points to the `www` directory in this project
 
 ### Running
 

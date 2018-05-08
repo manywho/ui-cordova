@@ -3,13 +3,13 @@ const progress = require('progress');
 const rp = require('request-promise-native');
 const fs = require('fs-extra');
 const mkdirp = require('mkdirp');
-const decompressResponse = require('decompress-response'); 
+const decompressResponse = require('decompress-response');
 const argv = require('yargs').argv;
 const metadata = require('./metadata');
 
 const { apiBaseUrl = 'https://flow.manywho.com', cdnBaseUrl = 'https://assets.manywho.com' } = argv;
 
-const generateHtml = ({ 
+const generateHtml = ({
     htmlTemplate, makeOffline, theme, tenantId, flowId, flowVersionId
 }) => htmlTemplate
     .replace('{{{OFFLINE}}}', makeOffline ? '<script src="js/ui-offline.js"></script>' : '')
@@ -19,7 +19,16 @@ const generateHtml = ({
     .replace('{{{FLOW_ID}}}', flowId)
     .replace('{{{FLOW_VERSION_ID}}}', flowVersionId);
 
-(async function() {    
+let userDefaults = {
+    theme: '', 
+    tenantId: '',
+    flowId: '',
+    flowVersionId: '',
+    username: '',
+    password: '',
+};
+
+(async function () {
     console.log('Downloading UI Framework');
 
     const bundles = await rp.get({
@@ -27,23 +36,26 @@ const generateHtml = ({
         json: true
     });
 
-    const userDefaults = JSON.parse(fs.readFileSync('./user-defaults.json'));
+    try {
+        userDefaults = fs.readFileSync('./user-defaults.json');
+    } catch (err) { }
+
     const htmlTemplate = fs.readFileSync('./template.html').toString();
-    
-    const theme = await promptly.prompt(`Theme (default: ${userDefaults.theme}):`, { default: userDefaults.theme });    
+
+    const theme = await promptly.prompt(`Theme (default: ${userDefaults.theme}):`, { default: userDefaults.theme });
     const tenantId = await promptly.prompt(`Tenant Id: (default: ${userDefaults.tenantId}):`, { default: userDefaults.tenantId });
     const flowId = await promptly.prompt(`Flow Id: (default: ${userDefaults.flowId}):`, { default: userDefaults.flowId });
     const flowVersionId = await promptly.prompt(`Flow Version Id: (default: ${userDefaults.flowVersionId}):`, { default: userDefaults.flowVersionId });
     const makeOffline = await promptly.confirm('Do you want to go offline? y/n');
-    const username = makeOffline 
+    const username = makeOffline
         ? await promptly.prompt(`Username: (default: ${userDefaults.username}):`, { default: userDefaults.username })
         : '';
-    const password = makeOffline 
+    const password = makeOffline
         ? await promptly.prompt(`Password: (default: ${userDefaults.password}):`, { default: userDefaults.password })
         : '';
     const saveDefaults = await promptly.confirm('Save these options as defaults? y/n');
 
-    const html = generateHtml({ 
+    const html = generateHtml({
         htmlTemplate, makeOffline, theme, tenantId, flowId, flowVersionId
     });
 
@@ -64,11 +76,11 @@ const generateHtml = ({
         './www/js/ui-core.js'
     ];
 
-    if(saveDefaults) {
+    if (saveDefaults) {
 
         const defaults = {
-            theme, 
-            tenantId, 
+            theme,
+            tenantId,
             flowId,
             flowVersionId,
             username,
@@ -76,8 +88,8 @@ const generateHtml = ({
         };
 
         fs.writeFile('./user-defaults.json', JSON.stringify(defaults));
-    } 
-    
+    }
+
     mkdirp.sync('./www/css');
     mkdirp.sync('./www/css/themes');
     mkdirp.sync('./www/js');
@@ -85,7 +97,7 @@ const generateHtml = ({
     console.log('Downloading assets');
 
     Promise.all(
-        bundlePaths.map(path => rp.get({ 
+        bundlePaths.map(path => rp.get({
             uri: `${cdnBaseUrl}${path}`,
             gzip: true
         }))
@@ -95,7 +107,7 @@ const generateHtml = ({
         })
     );
 
-    if(makeOffline) {
+    if (makeOffline) {
 
         Promise.all([
             metadata({ baseUrl: apiBaseUrl, username, password, tenantId, flowId, flowVersionId }),
@@ -106,9 +118,9 @@ const generateHtml = ({
         ]).then((files) => {
             fs.writeFile('./www/js/ui-metadata.js', `var metaData = ${JSON.stringify(JSON.parse(files[0]))};\n`);
             fs.writeFile('./www/js/ui-offline.js', files[1]);
-        });        
+        });
     }
-    
+
     console.log('Updating index.html');
 
     fs.writeFile('./www/index.html', html);

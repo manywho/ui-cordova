@@ -37,7 +37,7 @@ let userDefaults = {
     });
 
     try {
-        userDefaults = fs.readFileSync('./user-defaults.json');
+        userDefaults = JSON.parse(fs.readFileSync('./user-defaults.json'));
     } catch (err) { }
 
     const htmlTemplate = fs.readFileSync('./template.html').toString();
@@ -115,10 +115,15 @@ let userDefaults = {
                 uri: `${cdnBaseUrl}${bundles.offline[0]}`,
                 gzip: true
             })
-        ]).then((files) => {
-            fs.writeFile('./www/js/ui-metadata.js', `var metaData = ${JSON.stringify(JSON.parse(files[0]))};\n`);
-            fs.writeFile('./www/js/ui-offline.js', files[1]);
-        });
+        ]).then(
+            (files) => {
+                fs.writeFile('./www/js/ui-metadata.js', `var metaData = ${JSON.stringify(JSON.parse(files[0]))};\n`);
+                fs.writeFile('./www/js/ui-offline.js', files[1]);
+            },
+            (response) => {
+                console.log(`Failed to retrieve a snapshot of the flow\nAPI Response: ${response}`)
+            }
+        );
     }
 
     console.log('Updating index.html');

@@ -26,6 +26,32 @@ module.exports = async ({ baseUrl = "https://flow.manywho.com", username, passwo
 
     const authTokenClean = authToken.replace(/\"/g, '');
 
+    if (!flowVersionId) {
+        const snapshots = await rp({
+            method: "GET",
+            uri: baseUrl + "/api/draw/1/flow/snap/" + flowId,
+            headers: {
+                'authorization': authTokenClean,
+                'ManyWhoTenant': tenantId
+            },
+            json: true
+        });
+
+        if (snapshots && snapshots.length > 0) {
+            let snapshot = snapshots.find(item => item.isDefault);
+            if (snapshot)
+                flowVersionId = snapshot.id.versionId;
+            else {
+                console.error(`The flow ${flowId} has not been published, publish the flow then re-run this build`)
+                return;
+            }
+        }
+        else {
+            console.error(`The flow ${flowId} has not been published, publish the flow then re-run this build`)
+            return;
+        }
+    }
+
     const snapshot = await rp({
         method: "GET",
         uri: baseUrl + "/api/draw/1/flow/snap/" + flowId + "/" + flowVersionId,

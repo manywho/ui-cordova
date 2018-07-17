@@ -1,6 +1,6 @@
 {
   "name": "ui-cordova",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Cordova container for running ManyWho flows as apps on mobile devices.",
   "scripts": {
     "build": "node index.js"

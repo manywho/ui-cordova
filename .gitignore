@@ -5,3 +5,5 @@ www/css
 www/js
 node_modules
 user-defaults.json
+
+!www/js/authorization.js

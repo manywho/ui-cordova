@@ -120,6 +120,8 @@
             cdnUrl: '',
             initialize: function () {
                 
+                var queryParameters = manywho.utils.parseQueryString(window.location.search.substring(1));
+
                 var tenantId = '{{{TENANT_ID}}}';
                 var flowId = '{{{FLOW_ID}}}';
                 var flowVersionId = '{{{FLOW_VERSION_ID}}}';
@@ -161,10 +163,10 @@
                     flowId,
                     flowVersionId,
                     'main',
-                    null,
-                    null,
+                    queryParameters['join'],
+                    queryParameters['authorization'],
                     options,
-                    null
+                    queryParameters['initialization']
                 );
 
             }
@@ -174,6 +176,7 @@
     </script>
 	
     <script src="js/ui-core.js"></script>
+    <script src="js/authorization.js"></script>
     <script src="js/ui-bootstrap.js"></script>
     {{{METADATA}}}
     {{{OFFLINE}}}    

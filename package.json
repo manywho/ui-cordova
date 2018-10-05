@@ -44,7 +44,9 @@
     "csp-parse": "0.0.2",
     "elementtree": "^0.1.7",
     "glob": "^7.1.2",
+    "pgb-api": "^1.1.1",
     "plist": "^3.0.1",
+    "recursive-copy": "^2.0.9",
     "yargs": "^11.0.0"
   }
 }

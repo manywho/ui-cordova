@@ -1,12 +1,15 @@
 const promptly = require('promptly');
-const progress = require('progress');
 const rp = require('request-promise-native');
+const copy = require('recursive-copy');
 const fs = require('fs-extra');
 const mkdirp = require('mkdirp');
-const decompressResponse = require('decompress-response');
+const pgb = require('pgb-api')();
 const argv = require('yargs').argv;
 const metadata = require('./metadata');
+const sleep = require('util').promisify(setTimeout);
+const request = require('request');
 
+const apkDir = 'phonegapApks';
 const { apiBaseUrl = 'https://flow.manywho.com', cdnBaseUrl = 'https://assets.manywho.com' } = argv;
 
 const generateHtml = ({
@@ -20,7 +23,7 @@ const generateHtml = ({
     .replace('{{{FLOW_VERSION_ID}}}', flowVersionId);
 
 let userDefaults = {
-    theme: '', 
+    theme: 'paper', 
     tenantId: '',
     flowId: '',
     flowVersionId: '',
@@ -130,6 +133,81 @@ let userDefaults = {
 
     fs.writeFile('./www/index.html', html);
 
-    console.log('Done');
+    const isPhoneGapBuild = await promptly.confirm('Would you like to package your app using Phonegap Build? y/n');
+    const phoneGapAuthToken = isPhoneGapBuild
+    ? await promptly.prompt(`Auth token: `)
+    : '';
+
+    if (isPhoneGapBuild && phoneGapAuthToken) {
+
+        // The app assets are copied into a build folder
+        // so first remove an existing build folder
+        await fs.remove('./build');
+        await fs.mkdir('./build');
+        await copy('./www', './build/www');
+
+        // Copy config file or phone gap will use its own
+        await copy('./config.xml', './build/www/config.xml');
+
+        // Authenticate phonegap build requests
+        pgb.addAuth(phoneGapAuthToken);
+
+        // Now display all phone gap apps
+        // If none exist, then ask to add an app
+        let phoneGapApps;
+        try {
+            phoneGapApps = await pgb.getApps();
+        } catch(error) {
+            console.error('\x1b[31m%s\x1b[0m', error.message);
+            process.exit()
+        }
+
+        console.log('\x1b[36m%s\x1b[0m', 'Existing Apps:');
+        const appList = phoneGapApps.apps.map(app => {
+            console.log('\x1b[37m%s\x1b[0m', `* ${app.title}-${app.id}`);
+            return `${app.title}-${app.id}`
+        });
+
+        const selectedApp = await promptly.choose('Select an existing app:', appList);
+        const selectedAppId = selectedApp.split('-')[1];
+
+        const appData = {
+            id: selectedAppId,
+            private: true, 
+            share: false,
+            tag: 'master',
+            debug: true,
+        }
+
+        const updatedApp = await pgb.updateApp(selectedAppId, './www', appData);
+
+        console.log('\x1b[36m%s\x1b[0m', 'Building...');
+        try {
+            await pgb.buildApp(updatedApp.id, ['android']);
+        } catch(error) {
+            console.error('\x1b[31m%s\x1b[0m', error.message);
+            process.exit()
+        }
+    
+        let buildComplete = false;
+        while (!buildComplete) {
+            const appStatus = await pgb.getApp(updatedApp.id);
+            buildComplete = appStatus.status.android === 'complete';
+            const colour = buildComplete ? '\x1b[32m%s\x1b[0m' : '\x1b[33m%s\x1b[0m';
+            console.log(colour, appStatus.status.android);
+            await sleep(1500);
+        }
+
+        console.log('\x1b[36m%s\x1b[0m', 'Downloading...');
+
+        const r = request(`https://build.phonegap.com/api/v1/apps/${selectedAppId}/android?auth_token=${phoneGapAuthToken}`);
+        r.pipe(fs.createWriteStream(`./${apkDir}/${selectedAppId}.apk`));
+        await r;
+    
+        console.log('\x1b[1m%s\x1b[0m', `${selectedAppId}.apk can be found in your ${apkDir} folder and is ready to install on your Android device`);
+
+    } else {
+        console.log('\x1b[1m%s\x1b[0m', 'Your app is now ready to be run inside an emulator');
+    }
 })();
 

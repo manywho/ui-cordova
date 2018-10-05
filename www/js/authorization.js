@@ -16,7 +16,7 @@ manywho.authorization.invokeAuthorization = (response, flowKey, onAuthenticated)
                 // After a successful log the auth provider will attempt to redirect back to the flow, via flow.manywho.com.
                 // We intercept that here and redirect to index.html + the query string which contains the auth token
                 if (urlMatcher.test(event.url)) {
-                    ref.close();
+                    browser.close();
                     window.location.href = 'index.html' + event.url.substr(event.url.indexOf('?'));
                 }
             });

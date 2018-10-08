@@ -10,6 +10,16 @@ const sleep = require('util').promisify(setTimeout);
 const request = require('request');
 
 const apkDir = 'phonegapApks';
+
+// Colours for console logs
+const normalConsole = '%s\x1b[0m';
+const blueConsole = '\x1b[36m' + normalConsole;
+const redConsole = '\x1b[31m' + normalConsole;
+const whiteConsole = '\x1b[37m' + normalConsole;
+const yellowConsole = '\x1b[33m' + normalConsole;
+const greenConsole = '\x1b[32m' + normalConsole;
+const brightConsole = '\x1b[1m' + normalConsole;
+
 const { apiBaseUrl = 'https://flow.manywho.com', cdnBaseUrl = 'https://assets.manywho.com' } = argv;
 
 const generateHtml = ({
@@ -158,17 +168,17 @@ let userDefaults = {
         try {
             phoneGapApps = await pgb.getApps();
         } catch(error) {
-            console.error('\x1b[31m%s\x1b[0m', error.message);
-            process.exit()
+            console.error(redConsole, error.message);
+            process.exit();
         }
 
-        console.log('\x1b[36m%s\x1b[0m', 'Existing Apps:');
+        console.log(blueConsole, 'Existing Apps:');
         const appList = phoneGapApps.apps.map(app => {
-            console.log('\x1b[37m%s\x1b[0m', `* ${app.title}-${app.id}`);
+            console.log(whiteConsole, `* ${app.title}-${app.id}`);
             return `${app.title}-${app.id}`
         });
 
-        const selectedApp = await promptly.choose('Select an existing app:', appList);
+        const selectedApp = await promptly.choose('Which app would you like to update?', appList);
         const selectedAppId = selectedApp.split('-')[1];
 
         const appData = {
@@ -181,33 +191,33 @@ let userDefaults = {
 
         const updatedApp = await pgb.updateApp(selectedAppId, './www', appData);
 
-        console.log('\x1b[36m%s\x1b[0m', 'Building...');
+        console.log(blueConsole, 'Building...');
         try {
             await pgb.buildApp(updatedApp.id, ['android']);
         } catch(error) {
-            console.error('\x1b[31m%s\x1b[0m', error.message);
-            process.exit()
+            console.error(redConsole, error.message);
+            process.exit();
         }
     
         let buildComplete = false;
         while (!buildComplete) {
             const appStatus = await pgb.getApp(updatedApp.id);
             buildComplete = appStatus.status.android === 'complete';
-            const colour = buildComplete ? '\x1b[32m%s\x1b[0m' : '\x1b[33m%s\x1b[0m';
+            const colour = buildComplete ? greenConsole : yellowConsole;
             console.log(colour, appStatus.status.android);
             await sleep(1500);
         }
 
-        console.log('\x1b[36m%s\x1b[0m', 'Downloading...');
+        console.log(blueConsole, 'Downloading...');
 
         const r = request(`https://build.phonegap.com/api/v1/apps/${selectedAppId}/android?auth_token=${phoneGapAuthToken}`);
         r.pipe(fs.createWriteStream(`./${apkDir}/${selectedAppId}.apk`));
         await r;
     
-        console.log('\x1b[1m%s\x1b[0m', `${selectedAppId}.apk can be found in your ${apkDir} folder and is ready to install on your Android device`);
+        console.log(brightConsole, `${selectedAppId}.apk can be found in your ${apkDir} folder and is ready to install on your Android device`);
 
     } else {
-        console.log('\x1b[1m%s\x1b[0m', 'Your app is now ready to be run inside an emulator');
+        console.log(brightConsole, 'Your app is now ready to be run inside an emulator');
     }
 })();
 

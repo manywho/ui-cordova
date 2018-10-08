@@ -150,6 +150,14 @@ let userDefaults = {
 
     if (isPhoneGapBuild && phoneGapAuthToken) {
 
+        let appToBuild;
+        let appData = {
+            private: true, 
+            share: false,
+            tag: 'master',
+            debug: true,
+        };
+
         // The app assets are copied into a build folder
         // so first remove an existing build folder
         await fs.remove('./build');
@@ -172,28 +180,34 @@ let userDefaults = {
             process.exit();
         }
 
-        console.log(blueConsole, 'Existing Apps:');
-        const appList = phoneGapApps.apps.map(app => {
-            console.log(whiteConsole, `* ${app.title}-${app.id}`);
-            return `${app.title}-${app.id}`
-        });
+        if (phoneGapApps.apps.length > 0) {
 
-        const selectedApp = await promptly.choose('Which app would you like to update?', appList);
-        const selectedAppId = selectedApp.split('-')[1];
-
-        const appData = {
-            id: selectedAppId,
-            private: true, 
-            share: false,
-            tag: 'master',
-            debug: true,
+            console.log(blueConsole, 'Existing Apps:');
+            const appList = phoneGapApps.apps.map(app => {
+                console.log(whiteConsole, `* ${app.title}-${app.id}`);
+                return `${app.title}-${app.id}`
+            });
+    
+            const selectedApp = await promptly.choose('Which app would you like to update?', appList);
+            const selectedAppId = selectedApp.split('-')[1];
+    
+            appData['id'] = selectedAppId;
+    
+            appToBuild = await pgb.updateApp(selectedAppId, './build/www', appData);
+        } else {
+            // If there are no apps then create a new one
+            console.log('Adding your first app...');
+            try {
+                appToBuild = await pgb.addApp('./build/www', [appData]);
+            } catch(error) {
+                console.error(redConsole, error.message);
+                process.exit();
+            }
         }
-
-        const updatedApp = await pgb.updateApp(selectedAppId, './www', appData);
 
         console.log(blueConsole, 'Building...');
         try {
-            await pgb.buildApp(updatedApp.id, ['android']);
+            await pgb.buildApp(appToBuild.id, ['android']);
         } catch(error) {
             console.error(redConsole, error.message);
             process.exit();
@@ -201,7 +215,7 @@ let userDefaults = {
     
         let buildComplete = false;
         while (!buildComplete) {
-            const appStatus = await pgb.getApp(updatedApp.id);
+            const appStatus = await pgb.getApp(appToBuild.id);
             buildComplete = appStatus.status.android === 'complete';
             const colour = buildComplete ? greenConsole : yellowConsole;
             console.log(colour, appStatus.status.android);
@@ -210,11 +224,11 @@ let userDefaults = {
 
         console.log(blueConsole, 'Downloading...');
 
-        const r = request(`https://build.phonegap.com/api/v1/apps/${selectedAppId}/android?auth_token=${phoneGapAuthToken}`);
-        r.pipe(fs.createWriteStream(`./${apkDir}/${selectedAppId}.apk`));
+        const r = request(`https://build.phonegap.com/api/v1/apps/${appToBuild.id}/android?auth_token=${phoneGapAuthToken}`);
+        r.pipe(fs.createWriteStream(`./${apkDir}/${appToBuild.id}.apk`));
         await r;
     
-        console.log(brightConsole, `${selectedAppId}.apk can be found in your ${apkDir} folder and is ready to install on your Android device`);
+        console.log(brightConsole, `${appToBuild.id}.apk can be found in your ${apkDir} folder and is ready to install on your Android device`);
 
     } else {
         console.log(brightConsole, 'Your app is now ready to be run inside an emulator');

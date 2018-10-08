@@ -8,6 +8,7 @@ const argv = require('yargs').argv;
 const metadata = require('./metadata');
 const sleep = require('util').promisify(setTimeout);
 const request = require('request');
+const inquirer = require('inquirer');
 
 const apkDir = 'phonegapApks';
 
@@ -145,7 +146,7 @@ let userDefaults = {
 
     const isPhoneGapBuild = await promptly.confirm('Would you like to package your app using Phonegap Build? y/n');
     const phoneGapAuthToken = isPhoneGapBuild
-    ? await promptly.prompt(`Auth token: `)
+    ? await promptly.prompt(`Phonegap Build authentication token: `)
     : '';
 
     if (isPhoneGapBuild && phoneGapAuthToken) {
@@ -182,14 +183,21 @@ let userDefaults = {
 
         if (phoneGapApps.apps.length > 0) {
 
-            console.log(blueConsole, 'Existing Apps:');
             const appList = phoneGapApps.apps.map(app => {
-                console.log(whiteConsole, `* ${app.title}-${app.id}`);
                 return `${app.title}-${app.id}`
             });
+
+            const selectedApp = await inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'apps',
+                    message: 'Which app would you like to update?',
+                    choices: appList
+                }
+            ]);
     
-            const selectedApp = await promptly.choose('Which app would you like to update?', appList);
-            const selectedAppId = selectedApp.split('-')[1];
+            // const selectedApp = await promptly.choose('Which app would you like to update?', appList);
+            const selectedAppId = selectedApp.apps.split('-')[1];
     
             appData['id'] = selectedAppId;
     

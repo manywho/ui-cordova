@@ -20,7 +20,7 @@ const generateHtml = ({
     .replace('{{{FLOW_VERSION_ID}}}', flowVersionId);
 
 let userDefaults = {
-    theme: '', 
+    theme: '',
     tenantId: '',
     flowId: '',
     flowVersionId: '',
@@ -51,7 +51,7 @@ let userDefaults = {
         ? await promptly.prompt(`Username: (default: ${userDefaults.username}):`, { default: userDefaults.username })
         : '';
     const password = makeOffline
-        ? await promptly.prompt(`Password: (default: ${userDefaults.password}):`, { default: userDefaults.password })
+        ? await promptly.password(`Password: (default: ${userDefaults.password}):`, { default: userDefaults.password })
         : '';
     const saveDefaults = await promptly.confirm('Save these options as defaults? y/n');
 

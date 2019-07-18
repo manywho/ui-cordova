@@ -15,7 +15,7 @@
   "homepage": "https://github.com/manywho/ui-cordova#readme",
   "devDependencies": {
     "decompress-response": "^3.3.0",
-    "fs-extra": "^5.0.0",
+    "fs-extra": "^8.1.0",
     "mkdirp": "^0.5.1",
     "progress": "^2.0.0",
     "promptly": "^3.0.3",

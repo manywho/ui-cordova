@@ -17,7 +17,7 @@
     "decompress-response": "^3.3.0",
     "fs-extra": "^5.0.0",
     "mkdirp": "^0.5.1",
-    "progress": "^2.0.0",
+    "progress": "^2.0.3",
     "promptly": "^3.0.3",
     "request": "^2.83.0",
     "request-promise-native": "^1.0.5"
